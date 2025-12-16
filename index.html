@@ -98,24 +98,32 @@
     const popover = document.getElementById('introPopover');
     const letsGoBtn = document.getElementById('letsGoBtn');
 
-// Function to silently unlock audio on mobile
-function unlockAudioSilently() {
-  Object.values(audios).forEach(audio => {
-    const originalVolume = audio.volume;
-    audio.volume = 0;          // mute
-    audio.play().then(() => {
-      audio.pause();           // stop immediately
-      audio.currentTime = 0;   // reset
-      audio.volume = originalVolume; // restore volume
-    }).catch(() => {});
-  });
+ // Function to silently unlock audio on mobile
+    let audioUnlocked = false;
+
+function unlockAudioContext() {
+  if (audioUnlocked) return;
+
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  const ctx = new AudioContext();
+
+  const buffer = ctx.createBuffer(1, 1, 22050);
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
+  source.connect(ctx.destination);
+  source.start(0);
+
+  audioUnlocked = true;
 }
+
 
 // Handle "Start" click
 letsGoBtn.addEventListener('click', () => {
-  unlockAudioSilently();      // Unlock audio silently
+  unlockAudioContext(); // new
+  // Unlock audio silently
   popover.style.display = 'none'; // Hide popover
 });
+
 
     // Button click to play sounds
     document.querySelectorAll('.container button').forEach(button => {
