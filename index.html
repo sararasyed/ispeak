@@ -32,13 +32,15 @@
       color: white;
       cursor: pointer;
       transition: transform 0.1s ease, opacity 0.1s ease;
+      touch-action: manipulation;
     }
 
     button:active {
       transform: scale(0.98);
       opacity: 0.9;
     }
-  .btn-1 { background: #f46b5c; } /* red */
+
+    .btn-1 { background: #f46b5c; } /* red */
     .btn-2 { background: #33eb83; } /* blue */
     .btn-3 { background: #2e9ff5; } /* green */
     .btn-4 { background: #f7db3a; } /* orange */
@@ -46,12 +48,12 @@
 </head>
 <body>
 
-  <div class="container">
-    <button class="btn-1" onclick="playSound('sound1')">❌</button>
-    <button class="btn-2" onclick="playSound('sound2')">✅</button>
-    <button class="btn-3" onclick="playSound('sound3')">🧃</button>
-    <button class="btn-4" onclick="playSound('sound4')">👋</button>
-  </div>
+    <div class="container">
+        <button class="btn-1" data-sound="sound1">❌</button>
+        <button class="btn-2" data-sound="sound2">✅</button>
+        <button class="btn-3" data-sound="sound3">🧃</button>
+        <button class="btn-4" data-sound="sound4">👋</button>
+      </div>
 
   <!-- Audio elements -->
   <audio id="sound1" src="audio/No.m4a"></audio>
@@ -60,13 +62,37 @@
   <audio id="sound4" src="audio/Salaam.m4a"></audio>
 
   <script>
-    function playSound(id) {
-      const audio = document.getElementById(id);
-      audio.currentTime = 0;
-      audio.play();
+    const audios = {
+      sound1: document.getElementById('sound1'),
+      sound2: document.getElementById('sound2'),
+      sound3: document.getElementById('sound3'),
+      sound4: document.getElementById('sound4')
+    };
+  
+    let audioUnlocked = false;
+  
+    function unlockAudio() {
+      if (audioUnlocked) return;
+  
+      Object.values(audios).forEach(audio => {
+        audio.play().then(() => {
+          audio.pause();
+          audio.currentTime = 0;
+        }).catch(() => {});
+      });
+  
+      audioUnlocked = true;
     }
+  
+    document.querySelectorAll('button').forEach(button => {
+      button.addEventListener('click', () => {
+        unlockAudio();
+        const audio = audios[button.dataset.sound];
+        audio.currentTime = 0;
+        audio.play();
+      });
+    });
   </script>
 
 </body>
 </html>
-
