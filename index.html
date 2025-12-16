@@ -5,9 +5,7 @@
   <title>Full Screen Sound Buttons</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html, body {
       margin: 0;
@@ -40,26 +38,54 @@
       opacity: 0.9;
     }
 
-    .btn-1 { background: #f46b5c; } /* red */
-    .btn-2 { background: #33eb83; } /* blue */
-    .btn-3 { background: #2e9ff5; } /* green */
-    .btn-4 { background: #f7db3a; } /* orange */
+    .btn-1 { background: #f3796c; }
+    .btn-2 { background: #33eb83; }
+    .btn-3 { background: #7fd9fc; }
+    .btn-4 { background: #fdec66; }
+
+    /* Full-screen popover */
+    .popover {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      flex-direction: column;
+    }
+
+    .popover button {
+      background: black;
+      color: white;
+      font-size: 5vw;
+      padding: 1em 2em;
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body>
 
-    <div class="container">
-        <button class="btn-1" data-sound="sound1">❌</button>
-        <button class="btn-2" data-sound="sound2">✅</button>
-        <button class="btn-3" data-sound="sound3">🧃</button>
-        <button class="btn-4" data-sound="sound4">👋</button>
-      </div>
+  <!-- Full-screen popover -->
+  <div class="popover" id="introPopover">
+    <button id="letsGoBtn">Start</button>
+  </div>
+
+  <div class="container">
+    <button class="btn-1" data-sound="sound1">❌</button>
+    <button class="btn-2" data-sound="sound2">✅</button>
+    <button class="btn-3" data-sound="sound3">🧃</button>
+    <button class="btn-4" data-sound="sound4">👋</button>
+  </div>
 
   <!-- Audio elements -->
-  <audio id="sound1" src="audio/No.m4a"></audio>
-  <audio id="sound2" src="audio/Yes.m4a"></audio>
-  <audio id="sound3" src="audio/Pani.m4a"></audio>
-  <audio id="sound4" src="audio/Salaam.m4a"></audio>
+  <audio id="sound1" src="audio/No.m4a" preload="auto"></audio>
+  <audio id="sound2" src="audio/Yes.m4a" preload="auto"></audio>
+  <audio id="sound3" src="audio/Pani.m4a" preload="auto"></audio>
+  <audio id="sound4" src="audio/Salaam.m4a" preload="auto"></audio>
 
   <script>
     const audios = {
@@ -68,27 +94,31 @@
       sound3: document.getElementById('sound3'),
       sound4: document.getElementById('sound4')
     };
-  
-    let audioUnlocked = false;
-  
+
+    const popover = document.getElementById('introPopover');
+    const letsGoBtn = document.getElementById('letsGoBtn');
+
+    // Function to unlock audio on mobile
     function unlockAudio() {
-      if (audioUnlocked) return;
-  
       Object.values(audios).forEach(audio => {
         audio.play().then(() => {
           audio.pause();
           audio.currentTime = 0;
         }).catch(() => {});
       });
-  
-      audioUnlocked = true;
     }
-  
-    document.querySelectorAll('button').forEach(button => {
+
+    // Handle "Let's go" click
+    letsGoBtn.addEventListener('click', () => {
+      unlockAudio();          // Unlock audio
+      popover.style.display = 'none'; // Hide popover
+    });
+
+    // Button click to play sounds
+    document.querySelectorAll('.container button').forEach(button => {
       button.addEventListener('click', () => {
-        unlockAudio();
         const audio = audios[button.dataset.sound];
-        audio.currentTime = 0;
+        audio.currentTime = 0; 
         audio.play();
       });
     });
