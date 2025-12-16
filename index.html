@@ -60,21 +60,24 @@
   <audio id="sound4" src="audio/Salaam.m4a" preload="auto"></audio>
 
   <script>
-    const audios = {
-      sound1: document.getElementById('sound1'),
-      sound2: document.getElementById('sound2'),
-      sound3: document.getElementById('sound3'),
-      sound4: document.getElementById('sound4')
-    };
+      // Define audios with custom volume
+  const audios = {
+    sound1: { element: document.getElementById('sound1'), volume: 0.7 },  // louder
+    sound2: { element: document.getElementById('sound2'), volume: 1.0 },  // normal
+    sound3: { element: document.getElementById('sound3'), volume: 0.7 },
+    sound4: { element: document.getElementById('sound4'), volume: 0.8 }
+  };
 
-    // Button click to play sounds
-    document.querySelectorAll('.container button').forEach(button => {
-      button.addEventListener('click', () => {
-        const audio = audios[button.dataset.sound];
-        audio.currentTime = 0; 
-        audio.play();
-      });
+  // Button click to play sounds
+  document.querySelectorAll('.container button').forEach(button => {
+    button.addEventListener('click', () => {
+      const audioObj = audios[button.dataset.sound];
+      const audio = audioObj.element;
+      audio.volume = audioObj.volume;   // set custom volume
+      audio.currentTime = 0;
+      audio.play();
     });
+  });
   </script>
 
 </body>
